@@ -1,0 +1,50 @@
+<html>
+<head>
+    <link rel="stylesheet" href="/toastui-editor/toastui-editor.min.css"/>
+</head>
+<body>
+<div id="subject">
+    <span id="note-id" style="display: none" th:text="${id}"></span>
+    TITLE :<input type="text" value=""/>
+    <button onclick="saveButton()">SAVE</button>
+</div>
+<div id="editor"></div>
+</body>
+<script src="/toastui-editor/toastui-editor-all.min.js"></script>
+<script src="/toastui-editor/toastui-editor-plugin-uml.min.js"></script>
+<script src="/webjars/adminlte/2.3.11/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+    const Editor = toastui.Editor;
+    const {uml} = Editor.plugin;
+
+
+    const loadContents = new Promise((resolve => {
+        const noteId = $("#note-id").text();
+        $.ajax({
+            url: "/note/detail/" + noteId,
+            success: (d) => {
+                resolve(d);
+            }
+        })
+    }));
+
+    let editor;
+
+    loadContents.then(x => {
+        editor = new Editor({
+
+            el: document.querySelector('#editor'),
+            height: window.innerHeight * 0.9,
+            initialEditType: 'markdown',
+            previewStyle: 'vertical',
+            plugins: [uml],
+            initialValue: x.contents
+        });
+    })
+
+    const saveButton = () => {
+        console.log(editor.getMarkdown());
+    };
+
+</script>
+</html>

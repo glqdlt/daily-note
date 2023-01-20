@@ -1,0 +1,40 @@
+<html>
+<head>
+    <link rel="stylesheet" href="/toastui-editor/toastui-editor.min.css"/>
+</head>
+<body>
+<div id="subject">
+    <span id="note-id" style="display: none" th:text="${id}"></span>
+</div>
+<div id="viewer"></div>
+</body>
+<script src="/toastui-editor/toastui-editor-all.min.js"></script>
+<script src="/toastui-editor/toastui-editor-plugin-uml.min.js"></script>
+<script src="/webjars/adminlte/2.3.11/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+    const Editor = toastui.Editor;
+    const {uml} = Editor.plugin;
+
+
+    const loadContents = new Promise((resolve => {
+        const noteId = $("#note-id").text();
+        $.ajax({
+            url: "/note/detail/" + noteId,
+            success : (d) => {
+                resolve(d);
+            }
+        })
+    }));
+
+    loadContents.then(x => {
+        const editor = Editor.factory({
+            el: document.querySelector('#viewer'),
+            plugins: [uml],
+            viewer: true,
+            initialValue: x.contents
+        });
+    })
+
+
+</script>
+</html>
